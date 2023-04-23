@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  database:
+    image: 'postgres:latest'
+    ports:
+      - 5432:5432
+    env_file:
+      - .secrets
+    networks:
+      - postgres-network
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/
+
+  server:
+    image: 'flask_docker:latest'
+    ports:
+      - 5000:5000
+    env_file:
+      - .secrets
+    depends_on:
+      - database
+    networks:
+      - postgres-network
+
+
+networks: 
+  postgres-network:
+    driver: bridge
