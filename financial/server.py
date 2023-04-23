@@ -6,7 +6,7 @@ import json
 from typing import Optional, Dict
 
 import sqlalchemy.exc
-from flask import Flask, request, make_response
+from flask import request, make_response
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -111,7 +111,7 @@ def statistics():
     records = [to_dict(x) for x in query.all()]
     df = pandas.DataFrame(records, columns=['symbol', 'date', 'open_price', 'close_price', 'volume'])
 
-    return str({
+    return json.dumps({
         "data": {
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat(),
