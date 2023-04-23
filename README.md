@@ -1,3 +1,32 @@
+# Overview
+This project queries price `ibm and appl` price data from 
+alpha vantage and stores them in the database.  
+We then expose end points to allow the user to query 
+the price data as well as the statistics endpoint
+to provide the aggregated data.
+
+## Tech stack
+- Python 3.11
+- Postgres
+- Flask
+- SQLAlchemy
+- Pandas
+
+## Secrets maintenance
+We expect a `.secrets` file to exist in the directory. This file 
+contains the key to query alpha vantage and postgres credentials.  
+The file is expected to be in this format
+```
+ALPHA_VANTAGE_KEY=XYZ
+POSTGRES_USER=username
+POSTGRES_PASSWORD=password
+POSTGRES_URL=postgresql://username:password@database/postgres
+```
+Containers for both development and prod can use `--env-file` to set the secrets file
+or change it in `docker-compose.yml`. For production use cases
+we may want to integrate with secrets manager/vault in the future
+
+
 # Requirements
 - python-3.11.3
 - pyenv
@@ -12,16 +41,6 @@
 - psycopg2-binary: binary for using postgres with sqlalchemy
 - Flask-SQLAlchemy: extension to flask for using sqlalchemy
 
-# Secrets file
-We expect a `.secrets` file to exist in the directory. This file 
-contains the key to query alpha vantage and postgres credentials.  
-The file is expected to be in this format
-```
-ALPHA_VANTAGE_KEY=XYZ
-POSTGRES_USER=username
-POSTGRES_PASSWORD=password
-POSTGRES_URL=postgresql://username:password@database/postgres
-```
 
 # Building the docker container and starting up
 ```commandline
@@ -42,12 +61,12 @@ docker exec -it $CONTAINER_ID python3 get_raw_data.py
 # Testing the end points
 ```commandline
 # stats
-    curl 'http://localhost:5000/api/statistics?start_date=2022-01-06&end_date=2023-02-01&symbol=IBM'
+curl 'http://localhost:5000/api/statistics?start_date=2022-01-06&end_date=2023-02-01&symbol=IBM'
 # individual data
 curl 'http://localhost:5000/api/financial_data?limit=5&symbol=IBm&start_date=2023-02-01&end_date=2023-02-10'
 ```
 
-# Pyenv setup (for running locally without docker)
+# Running locally with pyenv setup
 See the instructions here: 
 https://github.com/pyenv/pyenv
 
