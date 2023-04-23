@@ -28,6 +28,10 @@ class FinancialData(db.Model):
 
 
 def to_date(args: Dict, date_param: str) -> Optional[datetime.date]:
+    """
+    Extracts an optional date from the args with keys date_param and
+    returns a parsed date. The date is expected to be in iso format.
+    """
     extracted = args[date_param] if date_param in args else None
     return datetime.date.fromisoformat(extracted) if extracted else None
 
@@ -40,6 +44,7 @@ def financial_data():
     limit = int(request.args['limit']) if 'limit' in args else 5
     page = int(request.args['page']) if 'page' in args else 1
 
+    # create the query with the right filters.
     query = FinancialData.query
     if symbol:
         query = query.filter(FinancialData.symbol == symbol)
@@ -48,6 +53,7 @@ def financial_data():
     if start_date:
         query = query.filter(FinancialData.date > start_date)
 
+    # create the pagination info data
     data = query.paginate(page=page, per_page=limit)
     count = query.count()
     pages = int(count / limit)
@@ -65,6 +71,7 @@ def financial_data():
         "error": ""
     }
 
+    # parse and create the data from db.
     records = []
     for x in data:
         records.append({
@@ -108,6 +115,7 @@ def statistics():
             "volume": input.volume
         }
 
+    # use pandas to do the calculation.
     records = [to_dict(x) for x in query.all()]
     df = pandas.DataFrame(records, columns=['symbol', 'date', 'open_price', 'close_price', 'volume'])
 

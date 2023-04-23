@@ -14,6 +14,9 @@ class Base(DeclarativeBase):
 
 
 class FinancialData(Base):
+    """
+    python class for representation of the financial_data table.
+    """
     __tablename__ = "financial_data"
 
     id: Mapped[int] = mapped_column(type_=sqlalchemy.types.BIGINT, primary_key=True)

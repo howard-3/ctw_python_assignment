@@ -17,6 +17,18 @@ DEFAULT_TICKERS = ['IBM', 'AAPL']
 
 
 def fetch_financial_data(req_api_key: str, ticker: str) -> List[Dict]:
+    """
+    Queries the alpha vantage api and return a list of dictionary with keys
+
+    - symbol: str
+    - date: date
+    - open_price: float
+    - close_price: float
+    - volume: float
+    :param req_api_key: alpha vantage api key
+    :param ticker: the ticker to query for
+    :return: a list of dictionaries or if invalid input is provided, a key error may be raised.
+    """
     resp = requests.get(f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&"
                         f"symbol={ticker}&apikey={req_api_key}")
     resp.raise_for_status()
@@ -36,6 +48,9 @@ def fetch_financial_data(req_api_key: str, ticker: str) -> List[Dict]:
 
 
 def write_to_db(records: List[Dict]):
+    """
+    Writes the list of records to db
+    """
     engine = sqlalchemy.create_engine(os.environ[POSTGRES_URL], echo=True)
     with Session(engine) as session:
         for rec in records:
