@@ -37,9 +37,12 @@ def fetch_financial_data(req_api_key: str, ticker: str) -> List[Dict]:
     time_series = out_json['Time Series (Daily)']
     for record_date in time_series.keys():
         record = time_series[record_date]
+        record_date = datetime.date.fromisoformat(record_date)
+        if record_date + datetime.timedelta(days=14) < datetime.datetime.now().date():
+            continue
         records.append({
             "symbol": ticker,
-            "date": datetime.date.fromisoformat(record_date),
+            "date": record_date,
             "open_price": float(record['1. open']),
             "close_price": float(record['4. close']),
             "volume": float(record['6. volume'])

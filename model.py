@@ -3,7 +3,7 @@ import os
 
 import sqlalchemy
 
-from sqlalchemy import MetaData, UniqueConstraint
+from sqlalchemy import MetaData, UniqueConstraint, Index
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 metadata_obj = MetaData(schema="public")
@@ -27,6 +27,8 @@ class FinancialData(Base):
     volume: Mapped[float]
     __table_args__ = (
         UniqueConstraint('symbol', 'date', name="unique_symbol_date"),
+        Index("idx_symbol", "symbol" ),
+        Index("idx_date", "date")
     )
 
     def __repr__(self):
